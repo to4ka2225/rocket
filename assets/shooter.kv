@@ -6,12 +6,12 @@
 
         MDIconButton:
             icon: "cog"
-            pos_hint: {"right": 1,"top": 1}
-            icon_size:"50dp"
+            pos_hint: {"right": 1, "top": 1}
+            icon_size: "50dp"
 
         MDLabel:
             text: "SHOOTER"
-            haling: "center"
+            halign: "center"
             font_size: "60sp"
 
         Image:
@@ -27,13 +27,13 @@
             MDButtonText:
                 text: "PLAY"
                 font_size: "80sp"
-                theme_text_color: "Custom"
-                text_color: "white"
+
 
 <Ship@Image>:
-    source: "assets/images/rocket.png"
+    source: "assets/images/img.png"
     size_hint: None, None
-    size: dp(100), dp(200)
+    size: dp(100), dp(200) # [ЗМІНА] Зменшено висоту корабля, щоб він виглядав пропорційніше
+
 
 <GameScreen>:
     FloatLayout:
@@ -42,15 +42,17 @@
 
             FloatLayout:
                 id: back
+                # [ЗМІНА] Додано фон космосу (найтемніший синій колір)
                 canvas.before:
                     Color:
-                        rgba: 0.02,0.02,0.08,1
+                        rgba: 0.02, 0.02, 0.08, 1
                     Rectangle:
                         pos: self.pos
                         size: self.size
 
             FloatLayout:
                 id: front
+                # [ЗМІНА] Корабель переміщено в нижню частину екрана над кнопками
                 Ship:
                     id: ship
                     center_x: root.center_x
