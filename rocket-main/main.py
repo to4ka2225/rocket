@@ -74,6 +74,31 @@ class PlayerShip(BaseShip):
         super().__init__(**kwargs)
         self.speed = dp(5)
 
+        self.anim_delay = 0.1
+        self._lastAnim = 0
+        self._currentAnim = 0
+
+        self.images = [
+            "assets/images/rocket/1.png",
+            "assets/images/rocket/2.png",
+            "assets/images/rocket/3.png",
+            "assets/images/rocket/4.png",
+            "assets/images/rocket/5.png",
+            "assets/images/rocket/6.png",
+            "assets/images/rocket/7.png",
+            "assets/images/rocket/8.png",
+            "assets/images/rocket/9.png",
+            "assets/images/rocket/10.png",
+            "assets/images/rocket/11.png"
+        ]
+
+    def animate(self,dt):
+        self._lastAnim += dt
+        if self._lastAnim >= self.anim_delay:
+            self._lastAnim = 0
+            self._currentAnim = (self._currentAnim + 1) % len(self.images)
+            self.source = self.images[self._currentAnim]
+
     def move(self, keys, screen_width):
         if keys["left"] and self.x > 0:
             self.x -= self.speed
@@ -180,6 +205,8 @@ class GameScreen(MDScreen):
 
         self.ids.ship.move(self.keys, Window.width)
 
+        self.ids.ship.animate(dt)
+
         self.spawn_timer += dt  # Додаємо час, що пройшов з минулого кадру
         if self.spawn_timer > self.spawn_delay:
             self.spawn_enemy()  # Створюємо ворога
@@ -220,8 +247,12 @@ class GameScreen(MDScreen):
         for enemy in self.enemies[:]:
             # collide_widget перевіряє, чи накладаються координати двох віджетів
             if self.ids.ship.collide_widget(enemy):
-                self.game_over()
-                return  # Якщо гра завершена, далі не перевіряємо
+                self.ids.ship.hp -= 10
+                self.ids.front.remove_widget(enemy)
+                self.enemies.remove(enemy)
+                if self.ids.ship.hp <= 0:
+                    self.game_over()
+                    return  # Якщо гра завершена, далі не перевіряємо
 
         # 2. Перевірка колізій куль
         for bullet in self.bullets[:]:
